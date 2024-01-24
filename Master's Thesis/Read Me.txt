@@ -1,0 +1,4 @@
+This document, titled "Assessing Air Quality Trends and Public Health Impacts in Major Urban Areas in the World," is a comprehensive research paper submitted for an M.Sc. in Data Science at Teesside University. 
+Authored by Samuel T. Ajani, it integrates environmental science, public health, and urban policy to analyze urban air quality and its effects on public health globally. 
+The study employs advanced statistical methods like ARIMA and linear regression, utilizing diverse datasets including air quality indices, health records, and satellite data. 
+It identifies significant trends in air quality deterioration and its correlation with health issues, evaluates air quality management policies, and emphasizes the need for comprehensive strategies and policy recommendations for improving urban air quality and public health.

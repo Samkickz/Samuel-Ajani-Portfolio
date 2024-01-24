@@ -1,0 +1,4 @@
+This task focuses on the design and implementation of a Business Intelligence (BI) solution for an e-commerce dataset using Microsoft Power BI. 
+The report details the analysis of sales and marketing data from an e-commerce company, including key metrics like revenue, cost of goods, net profit, and average order value. 
+It involves data preprocessing, cleansing, and modeling, and discusses findings based on the analysis of sales revenue, product popularity, customer behavior, and gender-based purchasing trends. 
+The report concludes with recommendations for improving data accuracy and analysis.

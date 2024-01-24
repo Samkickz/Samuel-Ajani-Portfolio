@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Samuel_Ajani_B1670361</title>
+  	<script src="https://d3js.org/d3.v4.min.js"></script>
+<style>
+  h3 {
+      color: rgb(70, 156, 81);
+      font-size: 20px;
+      font-weight: bold;
+      font-family: Helvetica;
+      text-align: center;
+    	padding: 0;
+    	margin: 0;
+  }
+
+  .gtitle {
+      background: rgb(255, 255, 255);
+      height: 100px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+  }
+
+  .gtitle h3 {
+      animation: slideUp 0.75s 0.5s cubic-bezier(0.17, 0.88, 0.32, 1.27) both,
+      fadeIn 0.25s 0.5s ease-in both;
+      padding: 0 20px;
+      position: absolute;
+      text-align: center;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+      top: 25%;
+      width: 100%;
+  }
+
+  @keyframes slideUp {
+      from {
+          transform: translateY(-200%);
+      }
+      to {
+          transform: translateY(-50%);
+      }
+  }
+
+  @keyframes fadeIn {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
+  }
+
+  .tooltip {
+      position: absolute;
+      display: none;
+      width: auto;
+      height: auto;
+      background: #515A5A;
+      border: 0 none;
+      border-radius: 4px;
+      color: #F8786B;
+      font: 12px sans-serif;
+      padding: 5px;
+      text-align: center;
+  } 
+</style>
+</head>
+
+<body>
+    <div class="gtitle">
+        <h3>CRYPTO SOLD IN EACH QUARTER VS TRADING VOLUME</h3>
+    </div>
+    <div class="tooltip"></div>
+        <svg width="1200" height="500"></svg>
+    <script type="text/javascript">
+
+    var divTooltip = d3.select("div.tooltip")
+
+    var svg = d3.select("svg"),
+        margin = {
+            top: 20,
+            right: 20,
+            bottom: 30,
+            left: 40
+        },
+
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom
+
+    var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x0 = d3.scaleBand()
+        .rangeRound([0, width])
+        .paddingInner(0.1);
+    var x1 = d3.scaleBand()
+        .padding(0.08);
+
+    var y = d3.scaleLinear()
+        .rangeRound([height, 0]);
+
+    var z = d3.scaleOrdinal()
+        .range(['#66c2a5','#fc8d62','#8da0cb','#e78ac3']);
+
+
+    // Parsing the Data from my github profile instead, the raw file exists in folder.
+    d3.csv("https://raw.githubusercontent.com/Samkickz/Data_Visualizers/main/2018CSV.csv", function(d, i, columns) {
+        for (var i = 1, n = columns.length; i < n; ++i)
+            d[columns[i]] = +d[columns[i]];
+        
+        return d;
+    }, function(error, data) {
+        if (error) throw error;
+      
+        var keys = data.columns.slice(1)
+        
+        x0.domain(data.map(function(d) {
+            return d.Crypto;
+        }));
+       
+        x1.domain(keys).rangeRound([0, x0.bandwidth()]);
+        y.domain([0, d3.max(data, function(d) {
+            return d3.max(keys, function(key) {
+                return d[key];
+            });
+        })]).nice()
+
+        // binding data to svg group elements
+        g.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("transform", function(d) {
+                return "translate(" + x0(d.Crypto) + ",0)";
+            })
+            .attr("class", "days")
+            .selectAll("rect")
+            .data(function(d) {
+                return keys.map(function(key) {
+                    return {
+                        key: key,
+                        value: d[key]
+                    };
+                });
+            })
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) {
+                return x1(d.key);
+            })
+            .attr("width", x1.bandwidth())
+            .attr("fill", function(d) {
+                return z(d.key);
+            })
+            .attr("y", function(d) {
+                return y(0);
+            })
+            .attr("height", function(d) {
+                return height - y(0);
+            })
+
+            // setting up tooltip and interactivity
+            .on("mouseover", function(d) {
+                divTooltip.style("left", d3.event.pageX + 10 + "px")
+                divTooltip.style("top", d3.event.pageY - 25 + "px")
+                divTooltip.style("display", "inline-block")
+                divTooltip.style("opacity", "0.9");
+                var x = d3.event.pageX,
+                    y = d3.event.pageY;
+                var elements = document.querySelectorAll(":hover");
+                var l = elements.length - 1;
+                var elementData = elements[l].__data__;
+                divTooltip.html(elementData.key + "<br>" + elementData.value);
+                d3.select(this)
+                    .attr("fill", "#F8786B")
+                    .style("stroke", "Black")
+                    .style("stroke-width", "1.8px")
+                    .style("stroke-opacity", "1");
+
+            })
+            .on("mouseout", function(d) {
+                divTooltip.style("display", "none")
+                d3.select(this).transition().duration(250)
+                    .attr("fill", z(d.key))
+                    .style("stroke-opacity", "0");
+            })
+            .transition()
+            .delay(function(d) {
+                return Math.random() * 250;
+            })
+            .duration(1000)
+            .attr("y", function(d) {
+                return y(d.value);
+            })
+            .attr("height", function(d) {
+                return height - y(d.value);
+            });
+    
+        g.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .style("opacity", "0")
+            .call(d3.axisBottom(x0));
+        g.select(".x")
+            .transition()
+            .duration(500)
+            .delay(800) 
+            .style("opacity", "1")
+   
+        g.append("g")
+            .attr("class", "y axis")
+            .style("opacity", "0")
+            .call(d3.axisLeft(y).ticks(null, "s"))
+            .append("text")
+            .attr("x", 2)
+            .attr("y", y(y.ticks().pop()) + 0.5)
+            .attr("dy", "0.90em")
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .text("Volume in million Units");
+           
+        g.select(".y")
+            .transition()
+            .duration(500)
+            .delay(1300)
+            .style("opacity", "1")
+   
+        var legend = g.append("g")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data(keys.slice())
+            .enter()
+            .append("g")
+            .attr("transform", function(d, i) {
+                return "translate(0," + i * 13 + ")";
+            })
+            .style("opacity", "0");
+
+        legend.append("rect")
+            .attr("x", width - 19)
+            .attr("y", -22)
+            .attr("width", 24)
+            .attr("height", 24)
+            .attr("fill", z);
+        
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", -15)
+            .attr("dy", "0.32em")
+            .text(function(d) {
+                return d;
+            });
+          
+        legend.transition()
+            .duration(500)
+            .delay(function(d, i) {
+                return 1300 + 100 * i;
+            })
+            .style("opacity", "1");
+
+    });
+  	</script>
+</body>
+</html>

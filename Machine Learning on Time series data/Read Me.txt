@@ -1,0 +1,5 @@
+The study utilizes data sourced from Kaggle, recorded from two sensors inside and outside a room. 
+It explores various machine learning algorithms for time-series forecasting, 
+Including the Prophet Forecasting Method, Naïve Forecasting Method, and Simple Exponential Smoothing. 
+The report assesses the accuracy and precision of these methods, 
+discussing the results and making recommendations for future research.

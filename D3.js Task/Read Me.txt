@@ -1,0 +1,4 @@
+This project was a task given in one of my modules. 
+During the first year of Masters course.
+It shows the use of D3.js in creating interactive data visualizations.
+The data which is a dataset of Different type of Cryptocurrencies sold and their trading volume.
